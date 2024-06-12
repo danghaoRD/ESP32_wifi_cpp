@@ -32,7 +32,7 @@
 #include <esp32c3/rom/ets_sys.h>
 #include "RD_wifi.hpp"
 static const char *TAG = "MQTT_EXAMPLE";
-
+Wifi rd_wifi_ap;
 
 
 static void log_error_if_nonzero(const char *message, int error_code)
@@ -162,20 +162,9 @@ extern "C" void app_main(void)
     esp_log_level_set("outbox", ESP_LOG_VERBOSE);
 
      ESP_ERROR_CHECK(nvs_flash_init());
-    // ESP_ERROR_CHECK(esp_netif_init());
-    // ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-//    wifi_init_softap("ESP32_ST", "12345678");
-    /* This helper function configures Wi-Fi or Ethernet, as selected in menuconfig.
-     * Read "Establishing Wi-Fi or Ethernet Connection" section in
-     * examples/protocols/README.md for more information about this function.
-     */
-//    ESP_ERROR_CHECK(example_connect());
 
-//     mqtt_app_start();
-
-    rd_wifi_init();
-   //  ESP_ERROR_CHECK(nvs_flash_init());
-   // wifi_init_softap(ssid_hao, ssid_hao);
+   rd_wifi_ap.begin();
+   rd_wifi_ap.initAP("Esp32_AP", "12345678");
 }
   
