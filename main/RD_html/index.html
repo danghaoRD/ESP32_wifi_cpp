@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 Web Server</title>
+</head>
+<body>
+    <h1>Hello, ESP32!</h1>
+    <h2>Riim Net key: %s</h2>
+    <p>This is a simple web page served by ESP32.</p>
+
+        <!-- Form to input text and submit -->
+    <form id="inputForm" action="/submit" method="post">
+        <!-- Label for the text box -->
+        <label for="inputText">Enter text:</label>
+        <!-- Text box for user input -->
+        <input type="text" id="inputText" name="inputText">
+        <!-- Submit button -->
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

@@ -31,9 +31,12 @@
 #include "mqtt_client.h"
 #include <esp32c3/rom/ets_sys.h>
 #include "RD_wifi.hpp"
+
+//#include "driver/i2c.h"
+#include "driver/i2c_master.h"
 static const char *TAG = "MQTT_EXAMPLE";
 Wifi rd_wifi_ap;
-
+HttpServer rd_http_server;
 
 static void log_error_if_nonzero(const char *message, int error_code)
 {
@@ -147,9 +150,13 @@ static void mqtt_app_start(void)
     esp_mqtt_client_start(client);
 }
 
+
+
+
+
 extern "C" void app_main(void)
 {
-    ESP_LOGI(TAG, "[APP] Startup..");
+    ESP_LOGI(TAG, "[APP] Startup..") ;
     ESP_LOGI(TAG, "[APP] Free memory: %" PRIu32 " bytes", esp_get_free_heap_size());
     ESP_LOGI(TAG, "[APP] IDF version: %s", esp_get_idf_version());
 
@@ -166,5 +173,8 @@ extern "C" void app_main(void)
 
    rd_wifi_ap.begin();
    rd_wifi_ap.initAP("Esp32_AP", "12345678");
+
+   rd_http_server.begin();
+
 }
   
