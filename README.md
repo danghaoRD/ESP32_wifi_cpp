@@ -59,3 +59,10 @@ I (5194) MQTT_EXAMPLE: MQTT_EVENT_DATA
 TOPIC=/topic/qos0
 DATA=data
 ```
+
+
+/*---------------------------------------thingboard device---------------------------------------------*/
+http AP end config wifi on http sever
+read sensor (light, tem, hum, ..)
+send sensor value to thing board
+gps

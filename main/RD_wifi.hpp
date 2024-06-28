@@ -3,7 +3,7 @@
 #include "esp_err.h"
 //#include <sys/param.h>
  #include <esp_http_server.h>
-// #ifdef __cplusplus // chỉ thêm vào hàm thư viện c muốn dùng ở c++
+// #ifdef __cplusplus // chỉ thêm khi muons build ở c
 // extern "C" {
 // #endif
 typedef const char *esp_event_base_t; // forward declaration -  
@@ -15,6 +15,7 @@ public:
     Wifi();
     void begin();
     void initAP(const std::string& ssid_AP, const std::string& pass_AP);
+    void initSTA(const std::string& ssid_STA, const std::string& pass_STA);
 private:
     static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);    
 };

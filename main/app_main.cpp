@@ -33,7 +33,6 @@
 #include "RD_wifi.hpp"
 
 //#include "driver/i2c.h"
-#include "driver/i2c_master.h"
 static const char *TAG = "MQTT_EXAMPLE";
 Wifi rd_wifi_ap;
 HttpServer rd_http_server;
@@ -118,7 +117,7 @@ static void mqtt_app_start(void)
     //     .broker.address.uri = CONFIG_BROKER_URL,
     // };
     esp_mqtt_client_config_t mqtt_cfg = {};
-    mqtt_cfg.broker.address.uri = CONFIG_BROKER_URL;
+   // mqtt_cfg.broker.address.uri = CONFIG_BROKER_URL;
 #if CONFIG_BROKER_URL_FROM_STDIN
     char line[128];
 

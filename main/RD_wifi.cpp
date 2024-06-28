@@ -70,14 +70,6 @@ void Wifi::initAP(const std::string& ssid_AP, const std::string& pass_AP){
                                                         NULL));
 
     wifi_config_t wifi_config = {};
-	// for(int i=0; i< strlen(ssid_setup); i++)
-	// {
-	// 	wifi_config.ap.ssid[i] = *(ssid_setup + i);
-	// }
-	// for(int i=0; i< strlen(pass_setup); i++)
-	// {
-	// 	wifi_config.ap.password[i] = *(pass_setup +i);
-	// }
     
     wifi_config.ap.ssid_len = ssid_AP.length();
     strncpy((char *) wifi_config.ap.ssid, ssid_AP.c_str(), sizeof(wifi_config.ap.ssid));
@@ -87,6 +79,8 @@ void Wifi::initAP(const std::string& ssid_AP, const std::string& pass_AP){
     wifi_config.ap.authmode = WIFI_AUTH_WPA2_PSK;
     wifi_config.ap.max_connection = EXAMPLE_MAX_AP_CON;
     wifi_config.ap.ssid_hidden = 0;
+
+
     if (pass_AP.empty()) {
         wifi_config.ap.authmode = WIFI_AUTH_OPEN;                               // hightLight
     }
@@ -99,6 +93,29 @@ void Wifi::initAP(const std::string& ssid_AP, const std::string& pass_AP){
              ssid_AP.c_str(), pass_AP.c_str(), EXAMPLE_ESP_WIFI_CHANNEL);
 }
 
+void Wifi::initSTA(const std::string& ssid_STA, const std::string& pass_STA) 
+{
+    esp_netif_create_default_wifi_sta();
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
+                                                        ESP_EVENT_ANY_ID,
+                                                        (esp_event_handler_t)&Wifi::event_handler,    // handler even
+                                                        NULL,
+                                                        NULL));
+
+    wifi_config_t wifi_config = {};
+    strncpy((char *) wifi_config.ap.ssid, ssid_STA.c_str(), sizeof(wifi_config.ap.ssid));
+    strncpy((char *) wifi_config.ap.password, pass_STA.c_str(), sizeof(wifi_config.ap.password));
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
+    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
+    ESP_ERROR_CHECK(esp_wifi_start());
+
+    ESP_LOGI(TAG, "wifi_init_sta finished. SSID:%s password:%s channel:%d",
+            ssid_STA.c_str(), ssid_STA.c_str(), EXAMPLE_ESP_WIFI_CHANNEL);
+}
+
 // không cần khai báo ại từ khóa static
 void Wifi::event_handler(void* arg , esp_event_base_t event_base, int32_t event_id, void* event_data){
     if (event_id == WIFI_EVENT_AP_STACONNECTED) {
@@ -108,6 +125,8 @@ void Wifi::event_handler(void* arg , esp_event_base_t event_base, int32_t event_
         wifi_event_ap_stadisconnected_t* event = (wifi_event_ap_stadisconnected_t*) event_data;
        ESP_LOGI(TAG, "station " MACSTR " leave, AID=%d",
                 MAC2STR(event->mac), event->aid);
+    } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
+        ESP_LOGI(TAG,"Wifi Sta conected");
     }
 }
 
