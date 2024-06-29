@@ -3,6 +3,7 @@
 #include "esp_err.h"
 //#include <sys/param.h>
  #include <esp_http_server.h>
+ #include <mqtt_client.h>
 // #ifdef __cplusplus // chỉ thêm khi muons build ở c
 // extern "C" {
 // #endif
@@ -17,7 +18,8 @@ public:
     void initAP(const std::string& ssid_AP, const std::string& pass_AP);
     void initSTA(const std::string& ssid_STA, const std::string& pass_STA);
 private:
-    static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);    
+    static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);    
+    static void ip_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);    
 };
 
 
@@ -34,3 +36,32 @@ private:
     httpd_handle_t  server;
     
 };
+
+class Mqtt
+{
+private:
+    /* data */
+    static void mqtt_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
+    esp_mqtt_client_handle_t client;
+    std::string broker_uri;
+public:
+    Mqtt(/* args */);
+    void begin();
+    void connect();
+    void disconnect();
+    void publish();
+    void subscribe();
+
+    ~Mqtt();
+};
+
+Mqtt::Mqtt(/* args */)
+{
+}
+
+Mqtt::~Mqtt()
+{
+}
+
+
+

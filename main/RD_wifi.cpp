@@ -14,6 +14,7 @@
 #include <cstring>
 //  #include "nvs_flash.h"
 static const char *TAG = "OTA:";
+static const char *WIFI = "WIFI:";
 //char* ssid_hao = "Hao_ESP32";
 #define EXAMPLE_ESP_WIFI_SSID      "Hao_ESP32"
 #define EXAMPLE_ESP_WIFI_PASS      "RDSL@2804"
@@ -65,7 +66,7 @@ void Wifi::initAP(const std::string& ssid_AP, const std::string& pass_AP){
 
     ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
                                                         ESP_EVENT_ANY_ID,
-                                                        (esp_event_handler_t)&Wifi::event_handler,    // handler even
+                                                        (esp_event_handler_t)&Wifi::wifi_event_handler,    // handler even
                                                         NULL,
                                                         NULL));
 
@@ -101,35 +102,91 @@ void Wifi::initSTA(const std::string& ssid_STA, const std::string& pass_STA)
 
     ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
                                                         ESP_EVENT_ANY_ID,
-                                                        (esp_event_handler_t)&Wifi::event_handler,    // handler even
+                                                        (esp_event_handler_t)&Wifi::wifi_event_handler,    // handler even
                                                         NULL,
                                                         NULL));
-
+    esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP,(esp_event_handler_t)&Wifi::ip_event_handler, NULL);
     wifi_config_t wifi_config = {};
-    strncpy((char *) wifi_config.ap.ssid, ssid_STA.c_str(), sizeof(wifi_config.ap.ssid));
-    strncpy((char *) wifi_config.ap.password, pass_STA.c_str(), sizeof(wifi_config.ap.password));
+    strncpy((char *) wifi_config.sta.ssid, ssid_STA.c_str(), sizeof(wifi_config.sta.ssid));
+    strncpy((char *) wifi_config.sta.password, pass_STA.c_str(), sizeof(wifi_config.sta.password));
+    wifi_config.sta.threshold.authmode = WIFI_AUTH_WPA2_PSK;
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
     ESP_ERROR_CHECK(esp_wifi_start());
 
     ESP_LOGI(TAG, "wifi_init_sta finished. SSID:%s password:%s channel:%d",
-            ssid_STA.c_str(), ssid_STA.c_str(), EXAMPLE_ESP_WIFI_CHANNEL);
+            ssid_STA.c_str(), pass_STA.c_str(), EXAMPLE_ESP_WIFI_CHANNEL);
 }
 
 // không cần khai báo ại từ khóa static
-void Wifi::event_handler(void* arg , esp_event_base_t event_base, int32_t event_id, void* event_data){
+void Wifi::wifi_event_handler(void* arg , esp_event_base_t event_base, int32_t event_id, void* event_data){
+
+    #if(0)// IP_event and wifi_event
     if (event_id == WIFI_EVENT_AP_STACONNECTED) {
         wifi_event_ap_staconnected_t* event = (wifi_event_ap_staconnected_t*) event_data;
-        ESP_LOGI(TAG,"station" MACSTR "join, AID=%d",MAC2STR(event->mac), event->aid);
+        ESP_LOGI(WIFI,"station" MACSTR "join, AID=%d",MAC2STR(event->mac), event->aid);
     } else if (event_id == WIFI_EVENT_AP_STADISCONNECTED) {
         wifi_event_ap_stadisconnected_t* event = (wifi_event_ap_stadisconnected_t*) event_data;
-       ESP_LOGI(TAG, "station " MACSTR " leave, AID=%d",
+       ESP_LOGI(WIFI, "station " MACSTR " leave, AID=%d",
                 MAC2STR(event->mac), event->aid);
     } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
-        ESP_LOGI(TAG,"Wifi Sta conected");
+        ESP_LOGI(WIFI, "Trying to connect with Wi-Fi\n");
+        esp_wifi_connect();
+    } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_CONNECTED) {
+        ESP_LOGI(WIFI, "Wi-Fi STA connected \n");
+    } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
+        ESP_LOGI(WIFI, "Wi-Fi STA disconnected\n");
+        esp_wifi_connect();
+    } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
+        ESP_LOGI(WIFI, "Wifi-Got ip\n");
+    }
+    #endif
+
+    if(WIFI_EVENT == event_base) {
+        switch (event_id) {
+            case WIFI_EVENT_AP_STACONNECTED:{
+                wifi_event_ap_staconnected_t* event = (wifi_event_ap_staconnected_t*) event_data;
+                ESP_LOGI(WIFI,"station" MACSTR "join, AID=%d",MAC2STR(event->mac), event->aid);
+                break;  
+            }  
+            case WIFI_EVENT_AP_STADISCONNECTED:{
+                wifi_event_ap_stadisconnected_t* event = (wifi_event_ap_stadisconnected_t*) event_data;
+                ESP_LOGI(WIFI, "station " MACSTR " leave, AID=%d",
+                MAC2STR(event->mac), event->aid);
+                break;  
+            }  
+            case WIFI_EVENT_STA_START:{
+                ESP_LOGI(WIFI, "Trying to connect with Wi-Fi\n");
+                esp_wifi_connect();
+                break;  
+            }  
+            case WIFI_EVENT_STA_CONNECTED:  
+                ESP_LOGI(WIFI, "Wi-Fi STA connected \n");
+                break;
+            case WIFI_EVENT_STA_DISCONNECTED:  
+                ESP_LOGI(WIFI, "Wi-Fi STA disconnected\n");
+                esp_wifi_connect();
+                break;
+        }
     }
 }
 
+
+void Wifi::ip_event_handler(void* arg , esp_event_base_t event_base, int32_t event_id, void* event_data){
+    if(IP_EVENT == event_base) {
+        switch (event_id) {
+            case IP_EVENT_STA_GOT_IP:  
+                ESP_LOGI(WIFI, "Got IP Address");
+                break;  
+            case IP_EVENT_STA_LOST_IP:  
+                ESP_LOGI(WIFI, "Lost IP Address");
+                break;  
+            default:
+                ESP_LOGI(WIFI, "IP event switch case default");
+                break;
+        }
+    }
+}
 
 static const char *TAG_HTTP  = "http_sever";
 
@@ -265,6 +322,40 @@ void HttpServer::stop() {
         httpd_stop(server);
         server = nullptr;
         ESP_LOGI(TAG_HTTP, "HTTP server stopped");
+    }
+}
+
+
+
+void Mqtt::mqtt_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
+    esp_mqtt_event_handle_t event = (esp_mqtt_event_handle_t)event_data;
+    switch (event_id) {
+    case MQTT_EVENT_CONNECTED:
+        printf("MQTT_EVENT_CONNECTED\n");
+        break;
+    case MQTT_EVENT_DISCONNECTED:
+        printf("MQTT_EVENT_DISCONNECTED\n");
+        break;
+    case MQTT_EVENT_SUBSCRIBED:
+        printf("MQTT_EVENT_SUBSCRIBED, msg_id=%d\n", event->msg_id);
+        break;
+    case MQTT_EVENT_UNSUBSCRIBED:
+        printf("MQTT_EVENT_UNSUBSCRIBED, msg_id=%d\n", event->msg_id);
+        break;
+    case MQTT_EVENT_PUBLISHED:
+        printf("MQTT_EVENT_PUBLISHED, msg_id=%d\n", event->msg_id);
+        break;
+    case MQTT_EVENT_DATA:
+        printf("MQTT_EVENT_DATA\n");
+        printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
+        printf("DATA=%.*s\r\n", event->data_len, event->data);
+        break;
+    case MQTT_EVENT_ERROR:
+        printf("MQTT_EVENT_ERROR\n");
+        break;
+    default:
+        printf("Other event id:%d\n", event_id);
+        break;
     }
 }
 

@@ -33,8 +33,10 @@
 #include "RD_wifi.hpp"
 
 //#include "driver/i2c.h"
+#define  EXAMPLE_ESP_WIFI_SSID "Haoshoku Haki" //TTS"
+#define  EXAMPLE_ESP_WIFI_PASS  "123456789"//  "TTS123456"
 static const char *TAG = "MQTT_EXAMPLE";
-Wifi rd_wifi_ap;
+Wifi rd_wifi;
 HttpServer rd_http_server;
 
 static void log_error_if_nonzero(const char *message, int error_code)
@@ -44,6 +46,7 @@ static void log_error_if_nonzero(const char *message, int error_code)
     }
 }
 
+#if 0
 /*
  * @brief Event handler registered to receive MQTT events
  *
@@ -148,7 +151,7 @@ static void mqtt_app_start(void)
     esp_mqtt_client_register_event(client, (esp_mqtt_event_id_t) ESP_EVENT_ANY_ID, mqtt_event_handler, NULL);
     esp_mqtt_client_start(client);
 }
-
+#endif
 
 
 
@@ -170,10 +173,10 @@ extern "C" void app_main(void)
      ESP_ERROR_CHECK(nvs_flash_init());
 
 
-   rd_wifi_ap.begin();
-   rd_wifi_ap.initAP("Esp32_AP", "12345678");
-
-   rd_http_server.begin();
+   rd_wifi.begin();
+//   rd_wifi_ap.initAP("Esp32_AP", "12345678");
+    rd_wifi.initSTA(EXAMPLE_ESP_WIFI_SSID, EXAMPLE_ESP_WIFI_PASS);
+//   rd_http_server.begin();
 
 }
   
