@@ -15,8 +15,11 @@ public:
     Wifi();
     void begin();
     void initAP(const std::string& ssid_AP, const std::string& pass_AP);
+    void init_sta(const std::string& ssid_sta, const std::string& pass_sta);
 private:
-    static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);    
+    static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);  
+    esp_event_handler_instance_t instance_any_id;
+    esp_event_handler_instance_t instance_got_ip;  
 };
 
 

@@ -15,10 +15,16 @@
 //  #include "nvs_flash.h"
 static const char *TAG = "OTA:";
 //char* ssid_hao = "Hao_ESP32";
-#define EXAMPLE_ESP_WIFI_SSID      "Hao_ESP32"
-#define EXAMPLE_ESP_WIFI_PASS      "RDSL@2804"
+#if(0)
+#   define EXAMPLE_ESP_WIFI_SSID      "Hao_ESP32"
+#   define EXAMPLE_ESP_WIFI_PASS      "RDSL@2804"
+#else
+#   define EXAMPLE_ESP_WIFI_SSID      "P202"
+#   define EXAMPLE_ESP_WIFI_PASS      "xincamon"
+#endif
 #define EXAMPLE_ESP_WIFI_CHANNEL   1
 #define EXAMPLE_MAX_AP_CON         4
+
 static int count_press =0;
 
 
@@ -70,14 +76,6 @@ void Wifi::initAP(const std::string& ssid_AP, const std::string& pass_AP){
                                                         NULL));
 
     wifi_config_t wifi_config = {};
-	// for(int i=0; i< strlen(ssid_setup); i++)
-	// {
-	// 	wifi_config.ap.ssid[i] = *(ssid_setup + i);
-	// }
-	// for(int i=0; i< strlen(pass_setup); i++)
-	// {
-	// 	wifi_config.ap.password[i] = *(pass_setup +i);
-	// }
     
     wifi_config.ap.ssid_len = ssid_AP.length();
     strncpy((char *) wifi_config.ap.ssid, ssid_AP.c_str(), sizeof(wifi_config.ap.ssid));
@@ -98,7 +96,31 @@ void Wifi::initAP(const std::string& ssid_AP, const std::string& pass_AP){
     ESP_LOGI(TAG, "wifi_init_softap finished. SSID:%s password:%s channel:%d",
              ssid_AP.c_str(), pass_AP.c_str(), EXAMPLE_ESP_WIFI_CHANNEL);
 }
+void Wifi::init_sta(const std::string &ssid_sta, const std::string &pass_sta){
+    esp_netif_create_default_wifi_sta();
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
 
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
+                                                        ESP_EVENT_ANY_ID,
+                                                        (esp_event_handler_t)&Wifi::event_handler,    // handler even
+                                                        NULL,
+                                                        &instance_any_id));
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT,
+                                                        IP_EVENT_STA_GOT_IP,
+                                                        &event_handler,
+                                                        NULL,
+                                                        &instance_got_ip)); //&instance_got_ip 
+    wifi_config_t wifi_config = {};
+    wifi_config.sta.threshold.authmode = WIFI_AUTH_WPA2_PSK;
+    strncpy((char *) wifi_config.sta.ssid, ssid_sta.c_str(), ssid_sta.size());
+    strncpy((char *) wifi_config.sta.password, pass_sta.c_str(), pass_sta.size()); 
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
+    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
+    ESP_ERROR_CHECK(esp_wifi_start()); 
+    ESP_LOGI(TAG, "wifi_init_sta finished. SSID:%s password:%s ",
+            ssid_sta.c_str(), pass_sta.c_str());                                                   
+}
 // không cần khai báo ại từ khóa static
 void Wifi::event_handler(void* arg , esp_event_base_t event_base, int32_t event_id, void* event_data){
     if (event_id == WIFI_EVENT_AP_STACONNECTED) {
@@ -205,6 +227,62 @@ esp_err_t HttpServer::submit_post_handler(httpd_req_t *req) {
     return ESP_OK;
 }
 
+// Function to handle Wi-Fi setup form submission
+esp_err_t wifi_setup_post_handler(httpd_req_t *req) {
+    char buf[100];
+    int ret, remaining = req->content_len;
+
+    // Initialize buffers for SSID and password
+    char ssid[32] = {0};
+    char password[64] = {0};
+
+    // Receive the form data
+    while (remaining > 0) {
+        if ((ret = httpd_req_recv(req, buf, MIN(remaining, sizeof(buf)))) <= 0) {
+            if (ret == HTTPD_SOCK_ERR_TIMEOUT) {
+                continue;
+            }
+            return ESP_FAIL;
+        }
+        remaining -= ret;
+        buf[ret] = '\0';
+
+        // Parse SSID and password from form data
+       // char *ssid_pos = strstr(buf, "ssid=");
+        char *password_pos = strstr(buf, "password=");
+        char *ssid_pos = strtok(buf, "&");
+        if (ssid_pos) {
+            sscanf(ssid_pos, "ssid=%31s", ssid);
+        }
+        if (password_pos) {
+            sscanf(password_pos, "password=%63s", password);
+        }
+    }
+
+    ESP_LOGI(TAG, "SSID: %s", ssid);
+    ESP_LOGI(TAG, "Password: %s", password);
+
+    // Store SSID and password in NVS
+    // nvs_handle_t nvs_handle;
+    // esp_err_t err = nvs_open("wifi_config", NVS_READWRITE, &nvs_handle);
+    // if (err != ESP_OK) {
+    //     ESP_LOGE(TAG, "Error opening NVS handle!");
+    //     return ESP_FAIL;
+    // }
+    // nvs_set_str(nvs_handle, "ssid", ssid);
+    // nvs_set_str(nvs_handle, "password", password);
+    // nvs_commit(nvs_handle);
+    // nvs_close(nvs_handle);
+
+    // Respond with a success message
+    const char resp[] = "Wi-Fi credentials received successfully!";
+    httpd_resp_send(req, resp, HTTPD_RESP_USE_STRLEN);
+
+    // Restart the ESP32 to apply the new Wi-Fi settings
+   // esp_restart();
+
+    return ESP_OK;
+}
 void HttpServer::begin() {
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
 
@@ -231,10 +309,18 @@ config.max_resp_headers = 1000;
         .user_ctx  = NULL
     };
 
+    httpd_uri_t setupo_wifi_sta = {
+        .uri       = "/setup",
+        .method    = HTTP_POST,
+        .handler   = wifi_setup_post_handler,
+        .user_ctx  = NULL
+    };
+
     if (httpd_start(&server, &config) == ESP_OK) {
         httpd_register_uri_handler(server, &hello);
         httpd_register_uri_handler(server, &button);
         httpd_register_uri_handler(server, &submit);
+        httpd_register_uri_handler(server, &setupo_wifi_sta);
         ESP_LOGI(TAG_HTTP, "HTTP server started");
     } else {
         ESP_LOGI(TAG_HTTP, "Failed to start HTTP server");

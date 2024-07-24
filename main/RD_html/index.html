@@ -3,20 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESP32 Web Server</title>
+    <title>Wi-Fi Setup</title>
 </head>
 <body>
-    <h1>Hello, ESP32!</h1>
-    <h2>Riim Net key: %s</h2>
-    <p>This is a simple web page served by ESP32.</p>
-
-        <!-- Form to input text and submit -->
-    <form id="inputForm" action="/submit" method="post">
-        <!-- Label for the text box -->
-        <label for="inputText">Enter text:</label>
-        <!-- Text box for user input -->
-        <input type="text" id="inputText" name="inputText">
-        <!-- Submit button -->
+    <h1>Wi-Fi Setup</h1>
+    <form action="/setup" method="post">
+        <label for="ssid">SSID:</label>
+        <input type="text" id="ssid" name="ssid"><br><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password"><br><br>
         <button type="submit">Submit</button>
     </form>
 </body>

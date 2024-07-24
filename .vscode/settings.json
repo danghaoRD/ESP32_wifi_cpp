@@ -4,7 +4,7 @@
   "idf.openOcdConfigs": [
     "board/esp32c3-builtin.cfg"
   ],
-  "idf.portWin": "COM22",
+  "idf.portWin": "COM4",
   "idf.flashType": "UART",
   "files.associations": {
     "limits": "cpp",
