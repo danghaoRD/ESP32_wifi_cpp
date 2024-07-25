@@ -10,6 +10,7 @@ typedef const char *esp_event_base_t; // forward declaration -
 // typedef esp_err_t;
 void rd_wifi_init(void);
 
+#define MAX_RETRY 10
 class Wifi {
 public:
     Wifi();
@@ -20,6 +21,7 @@ private:
     static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);  
     esp_event_handler_instance_t instance_any_id;
     esp_event_handler_instance_t instance_got_ip;  
+    static int retry_count;
 };
 
 

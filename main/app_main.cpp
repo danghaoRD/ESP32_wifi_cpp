@@ -36,6 +36,7 @@
 #include "driver/i2c_master.h"
 static const char *TAG = "MQTT_EXAMPLE";
 Wifi rd_wifi_ap;
+Wifi rd_wifi_sta;
 HttpServer rd_http_server;
 
 static void log_error_if_nonzero(const char *message, int error_code)
@@ -171,10 +172,11 @@ extern "C" void app_main(void)
      ESP_ERROR_CHECK(nvs_flash_init());
 
 
-   rd_wifi_ap.begin();
-   rd_wifi_ap.initAP("Esp32_AP", "12345678");
-
-   rd_http_server.begin();
+//    rd_wifi_ap.begin();
+//    rd_wifi_ap.initAP("Esp32_AP", "12345678");
+//    rd_http_server.begin();
+    rd_wifi_sta.begin();
+    rd_wifi_sta.init_sta("Hao", "123456789");
 
 }
   

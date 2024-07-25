@@ -14,6 +14,9 @@
 #include <cstring>
 //  #include "nvs_flash.h"
 static const char *TAG = "OTA:";
+// Định nghĩa biến static bên ngoài lớp
+int Wifi::retry_count = 0;
+
 //char* ssid_hao = "Hao_ESP32";
 #if(0)
 #   define EXAMPLE_ESP_WIFI_SSID      "Hao_ESP32"
@@ -97,7 +100,8 @@ void Wifi::initAP(const std::string& ssid_AP, const std::string& pass_AP){
              ssid_AP.c_str(), pass_AP.c_str(), EXAMPLE_ESP_WIFI_CHANNEL);
 }
 void Wifi::init_sta(const std::string &ssid_sta, const std::string &pass_sta){
-    esp_netif_create_default_wifi_sta();
+    esp_netif_t* netif_sta = esp_netif_create_default_wifi_sta();
+    esp_netif_set_hostname(netif_sta, "Hao_device");
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
 
@@ -112,6 +116,7 @@ void Wifi::init_sta(const std::string &ssid_sta, const std::string &pass_sta){
                                                         NULL,
                                                         &instance_got_ip)); //&instance_got_ip 
     wifi_config_t wifi_config = {};
+    
     wifi_config.sta.threshold.authmode = WIFI_AUTH_WPA2_PSK;
     strncpy((char *) wifi_config.sta.ssid, ssid_sta.c_str(), ssid_sta.size());
     strncpy((char *) wifi_config.sta.password, pass_sta.c_str(), pass_sta.size()); 
@@ -123,6 +128,7 @@ void Wifi::init_sta(const std::string &ssid_sta, const std::string &pass_sta){
 }
 // không cần khai báo ại từ khóa static
 void Wifi::event_handler(void* arg , esp_event_base_t event_base, int32_t event_id, void* event_data){
+    #if(0)
     if (event_id == WIFI_EVENT_AP_STACONNECTED) {
         wifi_event_ap_staconnected_t* event = (wifi_event_ap_staconnected_t*) event_data;
         ESP_LOGI(TAG,"station" MACSTR "join, AID=%d",MAC2STR(event->mac), event->aid);
@@ -130,6 +136,54 @@ void Wifi::event_handler(void* arg , esp_event_base_t event_base, int32_t event_
         wifi_event_ap_stadisconnected_t* event = (wifi_event_ap_stadisconnected_t*) event_data;
        ESP_LOGI(TAG, "station " MACSTR " leave, AID=%d",
                 MAC2STR(event->mac), event->aid);
+    }
+    #endif
+    if(WIFI_EVENT == event_base){
+        switch (event_id)
+        {
+        case WIFI_EVENT_AP_STACONNECTED:{
+            wifi_event_ap_staconnected_t* event = (wifi_event_ap_staconnected_t*) event_data;
+            ESP_LOGI(TAG,"station" MACSTR "join, AID=%d",MAC2STR(event->mac), event->aid);
+            /* code */
+        }
+            break;
+        case WIFI_EVENT_AP_STADISCONNECTED:{
+            wifi_event_ap_stadisconnected_t* event = (wifi_event_ap_stadisconnected_t*) event_data;
+            ESP_LOGI(TAG, "station " MACSTR " leave, AID=%d",
+            MAC2STR(event->mac), event->aid);
+        }
+            break;
+        case WIFI_EVENT_STA_START:
+            esp_wifi_connect();
+            break;
+        case WIFI_EVENT_STA_DISCONNECTED:
+            if (retry_count < MAX_RETRY) {
+                esp_wifi_connect();
+                retry_count++;
+                ESP_LOGI(TAG, "Retrying to connect to the AP");
+            } else {
+                //xEventGroupSetBits(wifi_event_group, WIFI_FAIL_BIT);
+                ESP_LOGI(TAG, "Retry max -  wifi disconect");
+            }
+            ESP_LOGI(TAG,"connect to the AP fail");
+        default:
+            ESP_LOGI(TAG,"wifi event default");
+            break;
+        }
+    }
+    if(IP_EVENT == event_base){
+        switch (event_id)
+        {
+        case (IP_EVENT_STA_GOT_IP):{
+            ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
+            ESP_LOGI(TAG, "got ip:" IPSTR, IP2STR(&event->ip_info.ip));
+            retry_count = 0;
+        }
+        break;
+        default:
+            ESP_LOGI(TAG, "ip event default");
+            break;
+        }
     }
 }
 

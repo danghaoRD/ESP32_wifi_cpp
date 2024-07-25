@@ -1,7 +1,7 @@
 {
     "version":            "1.1",
     "project_name":       "mqtt_tcp",
-    "project_version":    "65a427e",
+    "project_version":    "97d084d-dirty",
     "project_path":       "F:/code/ESP/Wifi_Cpp/wifi_cpp_ex1/ESP32_wifi_cpp",
     "idf_path":           "C:/Users/MY PC/esp/v5.2/esp-idf",
     "build_dir":          "F:/code/ESP/Wifi_Cpp/wifi_cpp_ex1/ESP32_wifi_cpp/build",
