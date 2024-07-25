@@ -124,8 +124,61 @@ void Wifi::init_sta(const std::string &ssid_sta, const std::string &pass_sta){
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
     ESP_ERROR_CHECK(esp_wifi_start()); 
     ESP_LOGI(TAG, "wifi_init_sta finished. SSID:%s password:%s ",
-            ssid_sta.c_str(), pass_sta.c_str());                                                   
+            ssid_sta.c_str(), pass_sta.c_str());     
+                                                  
 }
+
+void Wifi:: init_ap_and_sta(const std::string& ssid_ap, const std::string& pass_ap,
+                     const std::string& ssid_sta, const std::string& pass_sta){
+    // Create default Wi-Fi interfaces
+    esp_netif_t* netif_sta = esp_netif_create_default_wifi_sta();
+    esp_netif_t* netif_ap  = esp_netif_create_default_wifi_ap();
+    esp_netif_set_hostname(netif_sta, "Hao_device");  
+    
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    ESP_ERROR_CHECK(esp_wifi_init(&cfg));  
+
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
+                                                        ESP_EVENT_ANY_ID,
+                                                        &Wifi::event_handler,
+                                                        NULL,
+                                                        &instance_any_id));
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT,
+                                                        IP_EVENT_STA_GOT_IP,
+                                                        &Wifi::event_handler,
+                                                        NULL,
+                                                        &instance_got_ip));
+
+    // Configure STA
+    wifi_config_t wifi_config_sta = {};
+    strncpy((char*)wifi_config_sta.sta.ssid, ssid_sta.c_str(), sizeof(wifi_config_sta.sta.ssid));
+    strncpy((char*)wifi_config_sta.sta.password, pass_sta.c_str(), sizeof(wifi_config_sta.sta.password));
+    wifi_config_sta.sta.threshold.authmode = WIFI_AUTH_WPA2_PSK;
+
+    // Configure AP
+    wifi_config_t wifi_config_ap = {};
+    strncpy((char*)wifi_config_ap.ap.ssid, ssid_ap.c_str(), sizeof(wifi_config_ap.ap.ssid));
+    strncpy((char*)wifi_config_ap.ap.password, pass_ap.c_str(), sizeof(wifi_config_ap.ap.password));
+    wifi_config_ap.ap.ssid_len = ssid_ap.length();
+    wifi_config_ap.ap.authmode = WIFI_AUTH_WPA_WPA2_PSK;
+    wifi_config_ap.ap.max_connection = 4;  
+    wifi_config_ap.ap.beacon_interval = 100;
+
+    // Set Wi-Fi mode to APSTA
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
+
+
+    // Set Wi-Fi configurations
+    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config_sta));
+    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &wifi_config_ap));
+
+
+    // Start Wi-Fi
+    ESP_ERROR_CHECK(esp_wifi_start());
+
+    ESP_LOGI("wifi_apsta", "wifi_init_apsta finished.");
+
+    }
 // không cần khai báo ại từ khóa static
 void Wifi::event_handler(void* arg , esp_event_base_t event_base, int32_t event_id, void* event_data){
     #if(0)
