@@ -442,6 +442,18 @@ void HttpServer::stop() {
     }
 }
 
+
+MqttClient::MqttClient(const char* broker_uri, const char* token){
+    mqtt_cfg.broker.address.hostname = broker_uri;
+    mqtt_cfg.credentials.username = token;
+    client = esp_mqtt_client_init(&mqtt_cfg);
+}
+
+void MQTTClient::start() {
+    esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt_event_handler, client);
+    esp_mqtt_client_start(client);
+}
+
 // #ifdef __cplusplus
 // }
 // #endif

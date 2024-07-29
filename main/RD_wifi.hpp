@@ -3,6 +3,7 @@
 #include "esp_err.h"
 //#include <sys/param.h>
  #include <esp_http_server.h>
+ #include "mqtt_client.h"
 // #ifdef __cplusplus // chỉ thêm vào hàm thư viện c muốn dùng ở c++
 // extern "C" {
 // #endif
@@ -39,4 +40,15 @@ private:
     static esp_err_t submit_post_handler(httpd_req_t *req);
     httpd_handle_t  server;
     
+};
+
+
+class MqttClient {
+public:
+    MqttClient(const char* broker_uri, const char* token);
+    void start();
+    void publish(const char* topic, const char* payload);
+private:
+    esp_mqtt_client_handle_t client;
+    esp_mqtt_client_config_t mqtt_cfg;
 };
