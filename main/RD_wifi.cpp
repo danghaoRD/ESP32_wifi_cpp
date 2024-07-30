@@ -444,16 +444,43 @@ void HttpServer::stop() {
 
 
 MqttClient::MqttClient(const char* broker_uri, const char* token){
-    mqtt_cfg.broker.address.hostname = broker_uri;
+    /*
+        uri là bao gồm hostname + giao thức + port
+        token như một mã định danh client mà sever dùng để phân việc các thiết bị
+    */
+    mqtt_cfg.broker.address.hostname = broker_uri; 
     mqtt_cfg.credentials.username = token;
     client = esp_mqtt_client_init(&mqtt_cfg);
 }
 
-void MQTTClient::start() {
-    esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt_event_handler, client);
+void MqttClient::start() {
+    esp_mqtt_client_register_event(client, (esp_mqtt_event_id_t) ESP_EVENT_ANY_ID,(esp_event_handler_t) &MqttClient::mqtt_event_handler, client);
     esp_mqtt_client_start(client);
 }
 
+esp_err_t MqttClient::mqtt_event_handler_cb(esp_mqtt_event_handle_t event) {
+    esp_mqtt_client_handle_t client = event->client;
+    int msg_id;
+
+    switch (event->event_id) {
+    case MQTT_EVENT_CONNECTED: {
+        ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
+        // Gửi một message test đến ThingsBoard để kiểm tra kết nối
+        msg_id = esp_mqtt_client_publish(client, "v1/devices/me/telemetry", "{\"temp\":25}", 0, 1, 0);
+        ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+    }
+        break;
+    // Các xử lý sự kiện khác
+    default:
+        break;
+    }
+    return ESP_OK;
+}
+
+void MqttClient::mqtt_event_handler(void* handler_args, esp_event_base_t base, int32_t event_id, void* event_data) {
+    MqttClient* client = reinterpret_cast<MqttClient*>(handler_args);
+    client->mqtt_event_handler_cb((esp_mqtt_event_handle_t)event_data);
+}
 // #ifdef __cplusplus
 // }
 // #endif

@@ -7,6 +7,7 @@
 // #ifdef __cplusplus // chỉ thêm vào hàm thư viện c muốn dùng ở c++
 // extern "C" {
 // #endif
+// const char* token_thingboad_demo = "Kj9nO6xI3Stzdn27st8L";
 typedef const char *esp_event_base_t; // forward declaration -  
 // typedef esp_err_t;
 void rd_wifi_init(void);
@@ -49,6 +50,9 @@ public:
     void start();
     void publish(const char* topic, const char* payload);
 private:
+    static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event);
+    static void mqtt_event_handler(void* handler_args, esp_event_base_t base, int32_t event_id, void* event_data);
+
     esp_mqtt_client_handle_t client;
     esp_mqtt_client_config_t mqtt_cfg;
 };
