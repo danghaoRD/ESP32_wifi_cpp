@@ -481,6 +481,10 @@ void MqttClient::mqtt_event_handler(void* handler_args, esp_event_base_t base, i
     MqttClient* client = reinterpret_cast<MqttClient*>(handler_args);
     client->mqtt_event_handler_cb((esp_mqtt_event_handle_t)event_data);
 }
+
+void MqttClient::publish(const char* topic, const char* payload) {
+    esp_mqtt_client_publish(client, topic, payload, 0, 1, 0);
+}
 // #ifdef __cplusplus
 // }
 // #endif

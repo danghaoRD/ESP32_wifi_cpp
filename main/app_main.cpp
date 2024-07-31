@@ -39,7 +39,7 @@ Wifi rd_wifi_ap;
 Wifi rd_wifi_sta;
 Wifi rd_wifi_ap_sta;
 HttpServer rd_http_server;
-
+// MqttClient rd_mqtt_client;
 static void log_error_if_nonzero(const char *message, int error_code)
 {
     if (error_code != 0) {
@@ -57,6 +57,7 @@ static void log_error_if_nonzero(const char *message, int error_code)
  * @param event_id The id for the received event.
  * @param event_data The data for the event, esp_mqtt_event_handle_t.
  */
+#if(0)
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
 {
     ESP_LOGD(TAG, "Event dispatched from event loop base=%s, event_id=%" PRIi32 "", base, event_id);
@@ -113,7 +114,6 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         break;
     } 
 }
-
 static void mqtt_app_start(void)
 {
     // esp_mqtt_client_config_t mqtt_cfg = {
@@ -151,6 +151,7 @@ static void mqtt_app_start(void)
     esp_mqtt_client_register_event(client, (esp_mqtt_event_id_t) ESP_EVENT_ANY_ID, mqtt_event_handler, NULL);
     esp_mqtt_client_start(client);
 }
+#endif
 
 
 
@@ -184,5 +185,21 @@ extern "C" void app_main(void)
     rd_wifi_ap_sta.init_ap_and_sta("Esp32_AP", "12345678", "Hao", "123456789");
 
     rd_http_server.begin();
+    vTaskDelay(15000 / portTICK_PERIOD_MS);
+
+        ESP_LOGI(TAG, "mqtt conect ") ;
+    const char* broker_uri = "mqtt://demo.thingsboard.io:1883";
+    const char* token = "Kj9nO6xI3Stzdn27st8L";
+    MqttClient mqttClient(broker_uri, token);
+
+     ESP_LOGI(TAG, "mqtt log 2 ") ;
+    mqttClient.start();
+    while (true)
+    {
+        vTaskDelay(15000 / portTICK_PERIOD_MS);
+
+        char payload[] = "{\"temp\":25,\"humidity\":60}";
+        mqttClient.publish("v1/devices/me/telemetry", payload);
+    }
 }
   
