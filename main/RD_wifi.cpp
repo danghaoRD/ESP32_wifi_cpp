@@ -448,8 +448,12 @@ MqttClient::MqttClient(const char* broker_uri, const char* token){
         uri là bao gồm hostname + giao thức + port
         token như một mã định danh client mà sever dùng để phân việc các thiết bị
     */
-    mqtt_cfg.broker.address.hostname = broker_uri; 
+   mqtt_cfg = {};
+    mqtt_cfg.broker.address.uri = broker_uri; 
+    mqtt_cfg.broker.address.port = 1883;
     mqtt_cfg.credentials.username = token;
+     ESP_LOGI("Mqtt", "set init");
+     client = {};
     client = esp_mqtt_client_init(&mqtt_cfg);
 }
 
