@@ -125,7 +125,44 @@ void Wifi::init_sta(const std::string &ssid_sta, const std::string &pass_sta){
     ESP_ERROR_CHECK(esp_wifi_start()); 
     ESP_LOGI(TAG, "wifi_init_sta finished. SSID:%s password:%s ",
             ssid_sta.c_str(), pass_sta.c_str());     
-                                                  
+    #if(0)
+                // Khởi tạo cấu hình Wi-Fi với giá trị mặc định
+    wifi_config_t default_config;
+    memset(&default_config, 0, sizeof(default_config)); // Đặt tất cả về 0
+    strncpy((char *)default_config.sta.ssid, "MyDefaultSSID", sizeof(default_config.sta.ssid));
+    strncpy((char *)default_config.sta.password, "MyDefaultPassword", sizeof(default_config.sta.password));
+
+    // Lấy cấu hình Wi-Fi hiện tại
+    wifi_config_t current_config;
+    ESP_ERROR_CHECK(esp_wifi_get_config(ESP_IF_WIFI_STA, &current_config));
+
+    // So sánh SSID và mật khẩu
+    if (strcmp((char *)current_config.sta.ssid, (char *)default_config.sta.ssid) == 0 &&
+        strcmp((char *)current_config.sta.password, (char *)default_config.sta.password) == 0) {
+        ESP_LOGI(TAG, "Wi-Fi configuration has not been set up yet. Using default.");
+
+        // Bạn có thể bỏ qua đoạn code này trong lần khởi động tiếp theo
+        wifi_config_t wifi_config = {
+            .sta = {
+                .ssid = "YourSSID",
+                .password = "YourPassword",
+            },
+        };
+        ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
+
+
+        // Bạn có thể thiết lập Wi-Fi mới tại đây nếu cần
+    } else {
+        ESP_LOGI(TAG, "Wi-Fi has been previously configured.");
+        // Tiếp tục sử dụng cấu hình Wi-Fi hiện tại
+    }
+
+        // Khởi động Wi-Fi
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+    ESP_ERROR_CHECK(esp_wifi_start());
+    ESP_ERROR_CHECK(esp_wifi_connect());
+    #endif                                                
 }
 
 void Wifi:: init_ap_and_sta(const std::string& ssid_ap, const std::string& pass_ap,
