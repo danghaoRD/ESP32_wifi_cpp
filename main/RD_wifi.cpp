@@ -17,7 +17,7 @@ static const char *TAG = "OTA:";
 // Định nghĩa biến static bên ngoài lớp
 int Wifi::retry_count = 0;
 
-//char* ssid_hao = "Hao_ESP32";
+const char* ssid_hao = "Hao_ESP32";
 #if(0)
 #   define EXAMPLE_ESP_WIFI_SSID      "Hao_ESP32"
 #   define EXAMPLE_ESP_WIFI_PASS      "RDSL@2804"
@@ -115,16 +115,39 @@ void Wifi::init_sta(const std::string &ssid_sta, const std::string &pass_sta){
                                                         &event_handler,
                                                         NULL,
                                                         &instance_got_ip)); //&instance_got_ip 
-    wifi_config_t wifi_config = {};
+    // wifi_config_t wifi_config = {};
     
-    wifi_config.sta.threshold.authmode = WIFI_AUTH_WPA2_PSK;
-    strncpy((char *) wifi_config.sta.ssid, ssid_sta.c_str(), ssid_sta.size());
-    strncpy((char *) wifi_config.sta.password, pass_sta.c_str(), pass_sta.size()); 
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
-    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
+    // wifi_config.sta.threshold.authmode = WIFI_AUTH_WPA2_PSK;
+    // strncpy((char *) wifi_config.sta.ssid, ssid_sta.c_str(), ssid_sta.size());
+    // strncpy((char *) wifi_config.sta.password, pass_sta.c_str(), pass_sta.size()); 
+
+    wifi_config_t current_config;
+    ESP_ERROR_CHECK(esp_wifi_get_config(WIFI_IF_STA, &current_config));
+
+    if (strlen((char *)current_config.sta.ssid) == 0) {
+        ESP_LOGI(TAG, "wifi configuration has not been set up yet. setup default");
+
+        wifi_config_t default_config;
+        memset(&default_config, 0, sizeof(default_config)); // Đặt tất cả về 0
+        ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
+        strncpy((char *)default_config.sta.ssid, ssid_hao, sizeof(default_config.sta.ssid));
+        strncpy((char *)default_config.sta.password, "123456789", sizeof(default_config.sta.password));
+
+        ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &default_config));
+        ESP_LOGI(TAG, "wifi_init_sta finished. SSID:%s password:%s ",
+        (char *)default_config.sta.ssid,(char *)default_config.sta.password);  
+
+    }
+    else{
+        ESP_LOGI(TAG, "wifi  has  been configed");
+        ESP_LOGI(TAG, "wifi_init_sta finished. SSID:%s password:%s ",
+                (char *)current_config.sta.ssid, (char *)current_config.sta.password);  
+        ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));   
+    }
+
+
+   // ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
     ESP_ERROR_CHECK(esp_wifi_start()); 
-    ESP_LOGI(TAG, "wifi_init_sta finished. SSID:%s password:%s ",
-            ssid_sta.c_str(), pass_sta.c_str());     
     #if(0)
                 // Khởi tạo cấu hình Wi-Fi với giá trị mặc định
     wifi_config_t default_config;
@@ -185,12 +208,29 @@ void Wifi:: init_ap_and_sta(const std::string& ssid_ap, const std::string& pass_
                                                         &Wifi::event_handler,
                                                         NULL,
                                                         &instance_got_ip));
+ 
+    wifi_config_t wifi_config_sta;
+    ESP_ERROR_CHECK(esp_wifi_get_config(WIFI_IF_STA, &wifi_config_sta));
 
-    // Configure STA
-    wifi_config_t wifi_config_sta = {};
-    strncpy((char*)wifi_config_sta.sta.ssid, ssid_sta.c_str(), sizeof(wifi_config_sta.sta.ssid));
-    strncpy((char*)wifi_config_sta.sta.password, pass_sta.c_str(), sizeof(wifi_config_sta.sta.password));
-    wifi_config_sta.sta.threshold.authmode = WIFI_AUTH_WPA2_PSK;
+    if (strlen((char *)wifi_config_sta.sta.ssid) == 0) {
+        ESP_LOGI(TAG, "wifi configuration has not been set up yet. setup default");
+
+        memset(&wifi_config_sta, 0, sizeof(wifi_config_sta)); // Đặt tất cả về 0
+
+        strncpy((char *)wifi_config_sta.sta.ssid, "Hao", sizeof(wifi_config_sta.sta.ssid));
+        strncpy((char *)wifi_config_sta.sta.password, "123456789", sizeof(wifi_config_sta.sta.password));
+
+        ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config_sta));
+        ESP_LOGI(TAG, "wifi_init_sta finished. SSID:%s password:%s ",
+        (char *)wifi_config_sta.sta.ssid,(char *)wifi_config_sta.sta.password);  
+
+    }
+    else{ 
+        ESP_LOGI(TAG, "wifi  has  been configed");
+        ESP_LOGI(TAG, "wifi_init_sta finished. SSID:%s password:%s ",
+                (char *)wifi_config_sta.sta.ssid, (char *)wifi_config_sta.sta.password);     
+    }
+
 
     // Configure AP
     wifi_config_t wifi_config_ap = {};

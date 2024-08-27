@@ -1463,26 +1463,6 @@
         "children": [],
         "depends_on": null,
         "help": null,
-        "id": "SOC_SLEEP_SYSTIMER_STALL_WORKAROUND",
-        "name": "SOC_SLEEP_SYSTIMER_STALL_WORKAROUND",
-        "range": null,
-        "title": null,
-        "type": "bool"
-    },
-    {
-        "children": [],
-        "depends_on": null,
-        "help": null,
-        "id": "SOC_SLEEP_TGWDT_STOP_WORKAROUND",
-        "name": "SOC_SLEEP_TGWDT_STOP_WORKAROUND",
-        "range": null,
-        "title": null,
-        "type": "bool"
-    },
-    {
-        "children": [],
-        "depends_on": null,
-        "help": null,
         "id": "SOC_RTCIO_PIN_COUNT",
         "name": "SOC_RTCIO_PIN_COUNT",
         "range": null,
@@ -5552,36 +5532,6 @@
                 "range": null,
                 "title": null,
                 "type": "string"
-            },
-            {
-                "children": [
-                    {
-                        "children": [],
-                        "depends_on": "<choice COMPILER_ORPHAN_SECTIONS>",
-                        "help": "Places orphan sections without a warning message.",
-                        "id": "COMPILER_ORPHAN_SECTIONS_WARNING",
-                        "name": "COMPILER_ORPHAN_SECTIONS_WARNING",
-                        "range": null,
-                        "title": "Place with warning",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": "<choice COMPILER_ORPHAN_SECTIONS>",
-                        "help": "Places orphan sections without a warning/error message.",
-                        "id": "COMPILER_ORPHAN_SECTIONS_PLACE",
-                        "name": "COMPILER_ORPHAN_SECTIONS_PLACE",
-                        "range": null,
-                        "title": "Place silently",
-                        "type": "bool"
-                    }
-                ],
-                "depends_on": "!IDF_TARGET_LINUX",
-                "help": "If the linker finds orphan sections, it attempts to place orphan sections after sections of the same\nattribute such as code vs data, loadable vs non-loadable, etc.\nThat means that orphan sections could placed between sections defined in IDF linker scripts.\nThis could lead to corruption of the binary image. Configure the linker action here.",
-                "id": "compiler-options-orphan-sections-handling",
-                "name": "COMPILER_ORPHAN_SECTIONS",
-                "title": "Orphan sections handling",
-                "type": "choice"
             }
         ],
         "depends_on": null,
@@ -6126,6 +6076,24 @@
                         "depends_on": null,
                         "id": "component-config-hardware-settings-sleep-config",
                         "title": "Sleep Config",
+                        "type": "menu"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "IDF_TARGET_ESP32C3",
+                                "help": "Its not able to stall ESP32C3 systimer in sleep.\nTo fix related RTOS TICK issue, select it to disable related systimer during sleep.\nTODO: IDF-7036",
+                                "id": "ESP_SLEEP_SYSTIMER_STALL_WORKAROUND",
+                                "name": "ESP_SLEEP_SYSTIMER_STALL_WORKAROUND",
+                                "range": null,
+                                "title": "ESP32C3 SYSTIMER Stall Issue Workaround",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "id": "component-config-hardware-settings-esp_sleep_workaround",
+                        "title": "ESP_SLEEP_WORKAROUND",
                         "type": "menu"
                     },
                     {

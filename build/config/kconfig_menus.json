@@ -1463,26 +1463,6 @@
         "children": [],
         "depends_on": null,
         "help": null,
-        "id": "SOC_SLEEP_SYSTIMER_STALL_WORKAROUND",
-        "name": "SOC_SLEEP_SYSTIMER_STALL_WORKAROUND",
-        "range": null,
-        "title": null,
-        "type": "bool"
-    },
-    {
-        "children": [],
-        "depends_on": null,
-        "help": null,
-        "id": "SOC_SLEEP_TGWDT_STOP_WORKAROUND",
-        "name": "SOC_SLEEP_TGWDT_STOP_WORKAROUND",
-        "range": null,
-        "title": null,
-        "type": "bool"
-    },
-    {
-        "children": [],
-        "depends_on": null,
-        "help": null,
         "id": "SOC_RTCIO_PIN_COUNT",
         "name": "SOC_RTCIO_PIN_COUNT",
         "range": null,
@@ -5368,7 +5348,10 @@
                                 "help": "The minimum rssi to accept in the scan mode.",
                                 "id": "EXAMPLE_WIFI_SCAN_RSSI_THRESHOLD",
                                 "name": "EXAMPLE_WIFI_SCAN_RSSI_THRESHOLD",
-                                "range": null,
+                                "range": [
+                                    -127,
+                                    0
+                                ],
                                 "title": "WiFi minimum rssi",
                                 "type": "int"
                             },
@@ -6189,36 +6172,6 @@
                 "range": null,
                 "title": null,
                 "type": "string"
-            },
-            {
-                "children": [
-                    {
-                        "children": [],
-                        "depends_on": "<choice COMPILER_ORPHAN_SECTIONS>",
-                        "help": "Places orphan sections without a warning message.",
-                        "id": "COMPILER_ORPHAN_SECTIONS_WARNING",
-                        "name": "COMPILER_ORPHAN_SECTIONS_WARNING",
-                        "range": null,
-                        "title": "Place with warning",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": "<choice COMPILER_ORPHAN_SECTIONS>",
-                        "help": "Places orphan sections without a warning/error message.",
-                        "id": "COMPILER_ORPHAN_SECTIONS_PLACE",
-                        "name": "COMPILER_ORPHAN_SECTIONS_PLACE",
-                        "range": null,
-                        "title": "Place silently",
-                        "type": "bool"
-                    }
-                ],
-                "depends_on": "!IDF_TARGET_LINUX",
-                "help": "If the linker finds orphan sections, it attempts to place orphan sections after sections of the same\nattribute such as code vs data, loadable vs non-loadable, etc.\nThat means that orphan sections could placed between sections defined in IDF linker scripts.\nThis could lead to corruption of the binary image. Configure the linker action here.",
-                "id": "compiler-options-orphan-sections-handling",
-                "name": "COMPILER_ORPHAN_SECTIONS",
-                "title": "Orphan sections handling",
-                "type": "choice"
             }
         ],
         "depends_on": null,
@@ -7293,16 +7246,6 @@
                                                 "name": "BT_SMP_SLAVE_CON_PARAMS_UPD_ENABLE",
                                                 "range": null,
                                                 "title": "Slave enable connection parameters update during pairing",
-                                                "type": "bool"
-                                            },
-                                            {
-                                                "children": [],
-                                                "depends_on": "BT_BLE_SMP_ENABLE && BT_BLUEDROID_ENABLED",
-                                                "help": "There are tracking risks associated with using a fixed or static IRK.\nIf enabled this option, Bluedroid will assign a new randomly-generated IRK\nwhen all pairing and bonding records are deleted. This would decrease the ability\nof a previously paired peer to be used to determine whether a device\nwith which it previously shared an IRK is within range.",
-                                                "id": "BT_BLE_SMP_ID_RESET_ENABLE",
-                                                "name": "BT_BLE_SMP_ID_RESET_ENABLE",
-                                                "range": null,
-                                                "title": "Reset device identity when all bonding records are deleted",
                                                 "type": "bool"
                                             }
                                         ],
@@ -9680,16 +9623,6 @@
                                 "type": "bool"
                             },
                             {
-                                "children": [],
-                                "depends_on": "BT_NIMBLE_ENABLED",
-                                "help": "There are tracking risks associated with using a fixed or static IRK.\nIf enabled this option, Bluedroid will assign a new randomly-generated IRK\nwhen all pairing and bonding records are deleted. This would decrease the ability\nof a previously paired peer to be used to determine whether a device\nwith which it previously shared an IRK is within range.",
-                                "id": "BT_NIMBLE_SMP_ID_RESET",
-                                "name": "BT_NIMBLE_SMP_ID_RESET",
-                                "range": null,
-                                "title": "Reset device identity when all bonding records are deleted",
-                                "type": "bool"
-                            },
-                            {
                                 "children": [
                                     {
                                         "children": [],
@@ -10208,7 +10141,7 @@
                                                         "id": "BT_NIMBLE_PERIODIC_ADV_SYNC_TRANSFER",
                                                         "name": "BT_NIMBLE_PERIODIC_ADV_SYNC_TRANSFER",
                                                         "range": null,
-                                                        "title": "Enable Transfer Sync Events",
+                                                        "title": "Enable Transer Sync Events",
                                                         "type": "bool"
                                                     }
                                                 ],
@@ -10304,7 +10237,7 @@
                                             {
                                                 "children": [],
                                                 "depends_on": "BT_NIMBLE_GATT_CACHING && BT_NIMBLE_ENABLED",
-                                                "help": "Set this option to set the upper limit on number of descriptors per connection to be cached.",
+                                                "help": "Set this option to set the upper limit on number of discriptors per connection to be cached.",
                                                 "id": "BT_NIMBLE_GATT_CACHING_MAX_DSCS",
                                                 "name": "BT_NIMBLE_GATT_CACHING_MAX_DSCS",
                                                 "range": null,
@@ -10740,7 +10673,7 @@
                                         "type": "int"
                                     }
                                 ],
-                                "depends_on": "BT_NIMBLE_ENABLED",
+                                "depends_on": "SOC_ESP_NIMBLE_CONTROLLER && BT_NIMBLE_ENABLED",
                                 "help": "This option is used to enable encrypted advertising data.",
                                 "id": "BT_NIMBLE_ENC_ADV_DATA",
                                 "name": "BT_NIMBLE_ENC_ADV_DATA",
@@ -15105,16 +15038,6 @@
                         "range": null,
                         "title": "External Coexistence",
                         "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": "ESP_COEX_SW_COEXIST_ENABLE",
-                        "help": "If enabled, coexist power management will be enabled.",
-                        "id": "ESP_COEX_POWER_MANAGEMENT",
-                        "name": "ESP_COEX_POWER_MANAGEMENT",
-                        "range": null,
-                        "title": "Support power management under coexistence",
-                        "type": "bool"
                     }
                 ],
                 "depends_on": null,
@@ -16041,6 +15964,24 @@
                         "depends_on": null,
                         "id": "component-config-hardware-settings-sleep-config",
                         "title": "Sleep Config",
+                        "type": "menu"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "IDF_TARGET_ESP32C3",
+                                "help": "Its not able to stall ESP32C3 systimer in sleep.\nTo fix related RTOS TICK issue, select it to disable related systimer during sleep.\nTODO: IDF-7036",
+                                "id": "ESP_SLEEP_SYSTIMER_STALL_WORKAROUND",
+                                "name": "ESP_SLEEP_SYSTIMER_STALL_WORKAROUND",
+                                "range": null,
+                                "title": "ESP32C3 SYSTIMER Stall Issue Workaround",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "id": "component-config-hardware-settings-esp_sleep_workaround",
+                        "title": "ESP_SLEEP_WORKAROUND",
                         "type": "menu"
                     },
                     {
@@ -18414,7 +18355,28 @@
                         "type": "bool"
                     },
                     {
-                        "children": [],
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "ESP_WIFI_SLP_IRAM_OPT",
+                                "help": "The minimum timeout for waiting to receive data, unit: milliseconds.",
+                                "id": "ESP_WIFI_SLP_DEFAULT_MIN_ACTIVE_TIME",
+                                "name": "ESP_WIFI_SLP_DEFAULT_MIN_ACTIVE_TIME",
+                                "range": null,
+                                "title": "Minimum active time",
+                                "type": "int"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "ESP_WIFI_SLP_IRAM_OPT",
+                                "help": "The maximum time that wifi keep alive, unit: seconds.",
+                                "id": "ESP_WIFI_SLP_DEFAULT_MAX_ACTIVE_TIME",
+                                "name": "ESP_WIFI_SLP_DEFAULT_MAX_ACTIVE_TIME",
+                                "range": null,
+                                "title": "Maximum keep alive time",
+                                "type": "int"
+                            }
+                        ],
                         "depends_on": null,
                         "help": "Select this option to place called Wi-Fi library TBTT process and receive beacon functions in IRAM.\nSome functions can be put in IRAM either by ESP_WIFI_IRAM_OPT and ESP_WIFI_RX_IRAM_OPT, or this one.\nIf already enabled ESP_WIFI_IRAM_OPT, the other 7.3KB IRAM memory would be taken by this option.\nIf already enabled ESP_WIFI_RX_IRAM_OPT, the other 1.3KB IRAM memory would be taken by this option.\nIf neither of them are enabled, the other 7.4KB IRAM memory would be taken by this option.\nWi-Fi power-save mode average current would be reduced if this option is enabled.",
                         "id": "ESP_WIFI_SLP_IRAM_OPT",
@@ -18422,45 +18384,6 @@
                         "range": null,
                         "title": "WiFi SLP IRAM speed optimization",
                         "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Only for station in WIFI_PS_MIN_MODEM or WIFI_PS_MAX_MODEM. When the station enters the active state,\nit will work for at least ESP_WIFI_SLP_DEFAULT_MIN_ACTIVE_TIME. If a data packet is received or sent\nduring this period, the time will be refreshed. If the time is up, but the station still has packets\nto receive or send, the time will also be refreshed. unit: milliseconds.",
-                        "id": "ESP_WIFI_SLP_DEFAULT_MIN_ACTIVE_TIME",
-                        "name": "ESP_WIFI_SLP_DEFAULT_MIN_ACTIVE_TIME",
-                        "range": [
-                            8,
-                            60
-                        ],
-                        "title": "Minimum active time",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Only for station in WIFI_PS_MIN_MODEM or WIFI_PS_MAX_MODEM. If no packet has been\nsent within ESP_WIFI_SLP_DEFAULT_MAX_ACTIVE_TIME, a null data packet will be sent\nto maintain the connection with the AP. unit: seconds.",
-                        "id": "ESP_WIFI_SLP_DEFAULT_MAX_ACTIVE_TIME",
-                        "name": "ESP_WIFI_SLP_DEFAULT_MAX_ACTIVE_TIME",
-                        "range": [
-                            10,
-                            60
-                        ],
-                        "title": "Maximum keep alive time",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Only for station in WIFI_PS_MIN_MODEM or WIFI_PS_MAX_MODEM. When the station knows through the beacon\nthat AP will send broadcast packet, it will wait for ESP_WIFI_SLP_DEFAULT_WAIT_BROADCAST_DATA_TIME\nbefore entering the sleep process. If a broadcast packet is received with more data bits, the time\nwill refreshed. unit: milliseconds.",
-                        "id": "ESP_WIFI_SLP_DEFAULT_WAIT_BROADCAST_DATA_TIME",
-                        "name": "ESP_WIFI_SLP_DEFAULT_WAIT_BROADCAST_DATA_TIME",
-                        "range": [
-                            10,
-                            30
-                        ],
-                        "title": "Minimum wait broadcast data time",
-                        "type": "int"
                     },
                     {
                         "children": [
@@ -26906,16 +26829,6 @@
                         "name": "USB_HOST_ENABLE_ENUM_FILTER_CALLBACK",
                         "range": null,
                         "title": "Enable enumeration filter callback",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": "IDF_EXPERIMENTAL_FEATURES && SOC_USB_OTG_SUPPORTED",
-                        "help": "Feature is under development.",
-                        "id": "USB_HOST_EXT_HUB_SUPPORT",
-                        "name": "USB_HOST_EXT_HUB_SUPPORT",
-                        "range": null,
-                        "title": "Support USB HUB (Experimental)",
                         "type": "bool"
                     }
                 ],

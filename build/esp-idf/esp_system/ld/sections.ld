@@ -1,22 +1,15 @@
 /* Automatically generated file; DO NOT EDIT */
 /* Espressif IoT Development Framework Linker Script */
-/* Generated from: F:\code\ESP\Wifi_Cpp\wifi_cpp_ex1\ESP32_wifi_cpp\build\esp-idf\esp_system\ld\sections.ld.in */
+/* Generated from: /project/build/esp-idf/esp_system/ld/sections.ld.in */
 
 /*
-
  * SPDX-FileCopyrightText: 2021 Espressif Systems (Shanghai) CO LTD
-
  *
-
  * SPDX-License-Identifier: Apache-2.0
-
  */
 /*
-
  * Automatically generated file. DO NOT EDIT.
-
- * Espressif IoT Development Framework (ESP-IDF) 5.2.2 Configuration Header
-
+ * Espressif IoT Development Framework (ESP-IDF) 5.2.1 Configuration Header
  */
        
 /* List of deprecated options */
@@ -25,11 +18,8 @@ ENTRY(call_start_cpu0);
 SECTIONS
 {
   /**
-
    * RTC fast memory holds RTC wake stub code,
-
    * including from any source file named rtc_wake_stub*.c
-
    */
   .rtc.text :
   {
@@ -44,13 +34,9 @@ SECTIONS
     _rtc_text_end = ABSOLUTE(.);
   } > rtc_iram_seg
   /**
-
    * This section located in RTC FAST Memory area.
-
    * It holds data marked with RTC_FAST_ATTR attribute.
-
    * See the file "esp_attr.h" for more information.
-
    */
   .rtc.force_fast :
   {
@@ -64,15 +50,10 @@ SECTIONS
     _rtc_force_fast_end = ABSOLUTE(.);
   } > rtc_data_seg
   /**
-
    * RTC data section holds RTC wake stub
-
    * data/rodata, including from any source file
-
    * named rtc_wake_stub*.c and the data marked with
-
    * RTC_DATA_ATTR, RTC_RODATA_ATTR attributes.
-
    */
   .rtc.data :
   {
@@ -95,15 +76,10 @@ SECTIONS
     _rtc_bss_end = ABSOLUTE(.);
   } > rtc_data_location
   /**
-
    * This section holds data that should not be initialized at power up
-
    * and will be retained during deep sleep.
-
    * User data marked with RTC_NOINIT_ATTR will be placed
-
    * into this section. See the file "esp_attr.h" for more information.
-
    */
   .rtc_noinit (NOLOAD):
   {
@@ -114,13 +90,9 @@ SECTIONS
     _rtc_noinit_end = ABSOLUTE(.);
   } > rtc_data_location
   /**
-
    * This section located in RTC SLOW Memory area.
-
    * It holds data marked with RTC_SLOW_ATTR attribute.
-
    * See the file "esp_attr.h" for more information.
-
    */
   .rtc.force_slow :
   {
@@ -131,20 +103,15 @@ SECTIONS
     _rtc_force_slow_end = ABSOLUTE(.);
   } > rtc_slow_seg
   /**
-
    * This section holds RTC data that should have fixed addresses.
-
    * The data are not initialized at power-up and are retained during deep sleep.
-
    */
   .rtc_reserved (NOLOAD):
   {
     . = ALIGN(4);
     _rtc_reserved_start = ABSOLUTE(.);
     /* New data can only be added here to ensure existing data are not moved.
-
        Because data have adhered to the end of the segment and code is relied on it.
-
        >> put new data here << */
     *(.rtc_timer_data_in_rtc_mem .rtc_timer_data_in_rtc_mem.*)
     KEEP(*(.bootloader_data_rtc_mem .bootloader_data_rtc_mem.*))
@@ -300,11 +267,8 @@ SECTIONS
     *libspi_flash.a:spi_flash_wrap.*(.literal .literal.* .text .text.*)
   } > iram0_0_seg
   /**
-
    * This section is required to skip .iram0.text area because iram0_0_seg and
-
    * dram0_0_seg reflect the same address space on different buses.
-
    */
   .dram0.dummy (NOLOAD):
   {
@@ -377,15 +341,10 @@ SECTIONS
     . = ALIGN(4);
   } > dram0_0_seg
   /**
-
    * This section holds data that should not be initialized at power up.
-
    * The section located in Internal SRAM memory region. The macro _NOINIT
-
    * can be used as attribute to place data into this section.
-
    * See the "esp_attr.h" file for more information.
-
    */
   .noinit (NOLOAD):
   {
@@ -434,13 +393,13 @@ SECTIONS
     *libdriver.a:gptimer.*(.text .text.gptimer_acquire_group_handle .text.gptimer_del_timer .text.gptimer_destroy .text.gptimer_disable .text.gptimer_enable .text.gptimer_get_captured_count .text.gptimer_get_raw_count .text.gptimer_get_resolution .text.gptimer_new_timer .text.gptimer_register_event_callbacks .text.gptimer_register_to_group .text.gptimer_release_group_handle .text.gptimer_select_periph_clock .text.gptimer_set_alarm_action .text.gptimer_set_raw_count .text.gptimer_start .text.gptimer_stop .text.gptimer_unregister_from_group .text.timer_ll_set_clock_prescale .text.timer_ll_set_clock_source)
     *libesp_event.a:default_event_loop.*(.text .text.esp_event_handler_instance_register .text.esp_event_handler_instance_unregister .text.esp_event_handler_register .text.esp_event_handler_unregister .text.esp_event_loop_create_default .text.esp_event_loop_delete_default .text.esp_event_post)
     *libesp_event.a:esp_event.*(.text .text.base_node_add_handler .text.base_node_remove_all_handler .text.base_node_remove_handler .text.esp_event_dump .text.esp_event_handler_instance_register_with .text.esp_event_handler_instance_unregister_with .text.esp_event_handler_register_with .text.esp_event_handler_register_with_internal .text.esp_event_handler_unregister_with .text.esp_event_handler_unregister_with_internal .text.esp_event_loop_create .text.esp_event_loop_delete .text.esp_event_loop_run .text.esp_event_loop_run_task .text.esp_event_post_to .text.handler_execute .text.handler_instances_add .text.handler_instances_remove .text.handler_instances_remove_all .text.loop_node_add_handler .text.loop_node_remove_all_handler .text.loop_node_remove_handler)
-    *libesp_hw_support.a:cpu.*(.text .text.esp_cpu_clear_breakpoint .text.esp_cpu_clear_watchpoint .text.esp_cpu_set_breakpoint .text.esp_cpu_set_watchpoint)
+    *libesp_hw_support.a:cpu.*(.text .text.esp_cpu_clear_breakpoint .text.esp_cpu_clear_watchpoint .text.esp_cpu_intr_get_desc .text.esp_cpu_set_breakpoint .text.esp_cpu_set_watchpoint .text.is_intr_num_resv)
     *libesp_hw_support.a:esp_gpio_reserve.*(.text)
     *libesp_hw_support.a:gdma.*(.text .text.do_allocate_gdma_channel .text.gdma_acquire_group_handle .text.gdma_acquire_pair_handle .text.gdma_append .text.gdma_apply_strategy .text.gdma_connect .text.gdma_del_channel .text.gdma_del_rx_channel .text.gdma_del_tx_channel .text.gdma_disconnect .text.gdma_get_channel_id .text.gdma_get_free_m2m_trig_id_mask .text.gdma_install_rx_interrupt .text.gdma_install_tx_interrupt .text.gdma_new_ahb_channel .text.gdma_register_rx_event_callbacks .text.gdma_register_tx_event_callbacks .text.gdma_release_group_handle .text.gdma_release_pair_handle .text.gdma_reset .text.gdma_set_priority .text.gdma_set_transfer_ability .text.gdma_start .text.gdma_stop)
     *libesp_hw_support.a:periph_ctrl.*(.text .text.periph_ll_disable_clk_set_rst .text.periph_ll_enable_clk_clear_rst .text.periph_ll_get_clk_en_mask .text.periph_ll_get_clk_en_reg .text.periph_ll_get_rst_en_mask .text.periph_ll_get_rst_en_reg .text.periph_ll_reset .text.periph_module_disable .text.periph_module_enable .text.periph_rcc_acquire_enter .text.periph_rcc_acquire_exit .text.periph_rcc_release_enter .text.periph_rcc_release_exit)
     *libesp_hw_support.a:sar_periph_ctrl.*(.text .text.s_sar_adc_power_acquire .text.s_sar_adc_power_release .text.sar_periph_ctrl_adc_continuous_power_acquire .text.sar_periph_ctrl_adc_continuous_power_release .text.sar_periph_ctrl_adc_oneshot_power_acquire .text.sar_periph_ctrl_adc_oneshot_power_release .text.sar_periph_ctrl_init .text.sar_periph_ctrl_power_disable .text.sar_periph_ctrl_pwdet_power_acquire .text.sar_periph_ctrl_pwdet_power_release)
     *libesp_system.a:esp_system_chip.*(.text .text.esp_get_free_heap_size .text.esp_get_free_internal_heap_size .text.esp_get_idf_version .text.esp_get_minimum_free_heap_size)
-    *libesp_wifi.a:esp_adapter.*(.text .text.clear_intr_wrapper .text.coex_deinit_wrapper .text.coex_disable_wrapper .text.coex_enable_wrapper .text.coex_init_wrapper .text.coex_register_start_cb_wrapper .text.coex_schm_curr_period_get_wrapper .text.coex_schm_curr_phase_get_wrapper .text.coex_schm_flexible_period_get_wrapper .text.coex_schm_flexible_period_set_wrapper .text.coex_schm_interval_get_wrapper .text.coex_schm_process_restart_wrapper .text.coex_schm_register_cb_wrapper .text.coex_schm_status_bit_clear_wrapper .text.coex_schm_status_bit_set_wrapper .text.coex_wifi_channel_set_wrapper .text.coex_wifi_request_wrapper .text.disable_intr_wrapper .text.enable_intr_wrapper .text.esp_event_post_wrapper .text.esp_log_write_wrapper .text.esp_log_writev_wrapper .text.esp_phy_disable_wrapper .text.esp_phy_enable_wrapper .text.esp_read_mac_wrapper .text.event_group_wait_bits_wrapper .text.get_time_wrapper .text.mutex_create_wrapper .text.mutex_delete_wrapper .text.nvs_open_wrapper .text.queue_create_wrapper .text.queue_recv_wrapper .text.queue_send_to_back_wrapper .text.queue_send_to_front_wrapper .text.queue_send_wrapper .text.recursive_mutex_create_wrapper .text.set_intr_wrapper .text.set_isr_wrapper .text.task_create_pinned_to_core_wrapper .text.task_create_wrapper .text.task_get_max_priority_wrapper .text.wifi_clock_disable_wrapper .text.wifi_clock_enable_wrapper .text.wifi_create_queue .text.wifi_create_queue_wrapper .text.wifi_delete_queue .text.wifi_delete_queue_wrapper .text.wifi_reset_mac_wrapper .text.wifi_thread_semphr_free .text.wifi_thread_semphr_get_wrapper)
+    *libesp_wifi.a:esp_adapter.*(.text .text.clear_intr_wrapper .text.coex_deinit_wrapper .text.coex_disable_wrapper .text.coex_enable_wrapper .text.coex_init_wrapper .text.coex_register_start_cb_wrapper .text.coex_schm_curr_period_get_wrapper .text.coex_schm_curr_phase_get_wrapper .text.coex_schm_interval_get_wrapper .text.coex_schm_process_restart_wrapper .text.coex_schm_register_cb_wrapper .text.coex_schm_status_bit_clear_wrapper .text.coex_schm_status_bit_set_wrapper .text.coex_wifi_channel_set_wrapper .text.coex_wifi_request_wrapper .text.disable_intr_wrapper .text.enable_intr_wrapper .text.esp_event_post_wrapper .text.esp_log_write_wrapper .text.esp_log_writev_wrapper .text.esp_phy_disable_wrapper .text.esp_phy_enable_wrapper .text.esp_read_mac_wrapper .text.event_group_wait_bits_wrapper .text.get_time_wrapper .text.mutex_create_wrapper .text.mutex_delete_wrapper .text.nvs_open_wrapper .text.queue_create_wrapper .text.queue_recv_wrapper .text.queue_send_to_back_wrapper .text.queue_send_to_front_wrapper .text.queue_send_wrapper .text.recursive_mutex_create_wrapper .text.set_intr_wrapper .text.set_isr_wrapper .text.task_create_pinned_to_core_wrapper .text.task_create_wrapper .text.task_get_max_priority_wrapper .text.wifi_clock_disable_wrapper .text.wifi_clock_enable_wrapper .text.wifi_create_queue .text.wifi_create_queue_wrapper .text.wifi_delete_queue .text.wifi_delete_queue_wrapper .text.wifi_reset_mac_wrapper .text.wifi_thread_semphr_free .text.wifi_thread_semphr_get_wrapper)
     *libesp_wifi.a:wifi_netif.*(.text .text.esp_wifi_create_if_driver .text.esp_wifi_destroy_if_driver .text.esp_wifi_get_if_mac .text.esp_wifi_is_if_ready_when_started .text.esp_wifi_register_if_rxcb .text.wifi_ap_receive .text.wifi_driver_start .text.wifi_free .text.wifi_transmit)
     *libfreertos.a:app_startup.*(.literal .literal.* .text .text.*)
     *libfreertos.a:freertos_compatibility.*(.literal .literal.* .text .text.*)
@@ -463,35 +422,24 @@ SECTIONS
     *(.fini)
     *(.gnu.version)
     /** CPU will try to prefetch up to 16 bytes of
-
       * of instructions. This means that any configuration (e.g. MMU, PMS) must allow
-
       * safe access to up to 16 bytes after the last real instruction, add
-
       * dummy bytes to ensure this
-
       */
     . += _esp_flash_mmap_prefetch_pad_size;
     _text_end = ABSOLUTE(.);
     _instruction_reserved_end = ABSOLUTE(.); /* This is a symbol marking the flash.text end, this can be used for mmu driver to maintain virtual address */
     _etext = .;
     /**
-
      * Similar to _iram_start, this symbol goes here so it is
-
      * resolved by addr2line in preference to the first symbol in
-
      * the flash.text segment.
-
      */
     _flash_cache_start = ABSOLUTE(0);
   } > default_code_seg
   /**
-
    * This dummy section represents the .flash.text section but in default_rodata_seg.
-
    * Thus, it must have its alignment and (at least) its size.
-
    */
   .flash_rodata_dummy (NOLOAD):
   {
@@ -501,7 +449,6 @@ SECTIONS
     /* Create an empty gap as big as .flash.text section */
     . = . + SIZEOF(.flash.text);
     /* Prepare the alignment of the section above. Few bytes (0x20) must be
-
      * added for the mapping header. */
     . = ALIGN(_esp_mmu_block_size) + 0x20;
   } > default_rodata_seg
@@ -512,9 +459,7 @@ SECTIONS
     *(.rodata_desc .rodata_desc.*) /* Should be the first.  App version info.        DO NOT PUT ANYTHING BEFORE IT! */
     *(.rodata_custom_desc .rodata_custom_desc.*) /* Should be the second. Custom app version info. DO NOT PUT ANYTHING BEFORE IT! */
     /* Create an empty gap within this section. Thanks to this, the end of this
-
      * section will match .flash.rodata's begin address. Thus, both sections
-
      * will be merged when creating the final bin image. */
     . = ALIGN(ALIGNOF(.flash.rodata));
   } >default_rodata_seg
@@ -535,23 +480,14 @@ SECTIONS
     *(.gnu.version_r)
     . = (. + 7) & ~ 3;
     /*
-
      * C++ constructor and destructor tables
-
      * Don't include anything from crtbegin.o or crtend.o, as IDF doesn't use toolchain crt.
-
      *
-
      * RISC-V gcc is configured with --enable-initfini-array so it emits an .init_array section instead.
-
      * But the init_priority sections will be sorted for iteration in ascending order during startup.
-
      * The rest of the init_array sections is sorted for iteration in descending order during startup, however.
-
      * Hence a different section is generated for the init_priority functions which is iterated in
-
      * ascending order during startup. The corresponding code can be found in startup.c.
-
      */
     __init_priority_array_start = ABSOLUTE(.);
     KEEP (*(EXCLUDE_FILE (*crtend.* *crtbegin.*) .init_array.*))
@@ -595,20 +531,14 @@ SECTIONS
     _thread_local_end = ABSOLUTE(.);
   } > default_rodata_seg
   /*
-
     This section is a place where we dump all the rodata which aren't used at runtime,
-
     so as to avoid binary size increase
-
   */
   .flash.rodata_noload (NOLOAD) :
   {
     /*
-
       This is a symbol marking the flash.rodata end, this can be used for mmu driver to maintain virtual address
-
       We don't need to include the noload rodata in this section
-
     */
     _rodata_reserved_end = ABSOLUTE(.);
     . = ALIGN (4);
@@ -650,61 +580,8 @@ SECTIONS
     . = ALIGN (16);
     _heap_start = ABSOLUTE(.);
   } > dram0_0_seg
-  /* DWARF 1 */
-  .debug 0 : { *(.debug) }
-  .line 0 : { *(.line) }
-  /* GNU DWARF 1 extensions */
-  .debug_srcinfo 0 : { *(.debug_srcinfo) }
-  .debug_sfnames 0 : { *(.debug_sfnames) }
-  /* DWARF 1.1 and DWARF 2 */
-  .debug_aranges 0 : { *(.debug_aranges) }
-  .debug_pubnames 0 : { *(.debug_pubnames) }
-  /* DWARF 2 */
-  .debug_info 0 : { *(.debug_info .gnu.linkonce.wi.*) }
-  .debug_abbrev 0 : { *(.debug_abbrev) }
-  .debug_line 0 : { *(.debug_line) }
-  .debug_frame 0 : { *(.debug_frame) }
-  .debug_str 0 : { *(.debug_str) }
-  .debug_loc 0 : { *(.debug_loc) }
-  .debug_macinfo 0 : { *(.debug_macinfo) }
-  .debug_pubtypes 0 : { *(.debug_pubtypes) }
-  /* DWARF 3 */
-  .debug_ranges 0 : { *(.debug_ranges) }
-  /* SGI/MIPS DWARF 2 extensions */
-  .debug_weaknames 0 : { *(.debug_weaknames) }
-  .debug_funcnames 0 : { *(.debug_funcnames) }
-  .debug_typenames 0 : { *(.debug_typenames) }
-  .debug_varnames 0 : { *(.debug_varnames) }
-  /* GNU DWARF 2 extensions */
-  .debug_gnu_pubnames 0 : { *(.debug_gnu_pubnames) }
-  .debug_gnu_pubtypes 0 : { *(.debug_gnu_pubtypes) }
-  /* DWARF 4 */
-  .debug_types 0 : { *(.debug_types) }
-  /* DWARF 5 */
-  .debug_addr 0 : { *(.debug_addr) }
-  .debug_line_str 0 : { *(.debug_line_str) }
-  .debug_loclists 0 : { *(.debug_loclists) }
-  .debug_macro 0 : { *(.debug_macro) }
-  .debug_names 0 : { *(.debug_names) }
-  .debug_rnglists 0 : { *(.debug_rnglists) }
-  .debug_str_offsets 0 : { *(.debug_str_offsets) }
-  .comment 0 : { *(.comment) }
-  .note.GNU-stack 0: { *(.note.GNU-stack) }
-  .riscv.attributes 0: { *(.riscv.attributes) }
   /DISCARD/ :
   {
-   /**
-
-    * Discarding .rela.* sections results in the following mapping:
-
-    * .rela.text.* -> .text.*
-
-    * .rela.data.* -> .data.*
-
-    * And so forth...
-
-    */
-   *(.rela.*)
    *(.eh_frame_hdr)
    *(.eh_frame)
   }
