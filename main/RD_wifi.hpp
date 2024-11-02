@@ -21,6 +21,7 @@ public:
     void init_sta(const std::string& ssid_sta, const std::string& pass_sta);
     void init_ap_and_sta(const std::string& ssid_AP, const std::string& pass_AP,
                          const std::string& ssid_sta, const std::string& pass_sta);
+    void init_ap_and_sta(void);
 private:
     static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);  
     esp_event_handler_instance_t instance_any_id;
@@ -33,12 +34,13 @@ class HttpServer {
 
 public:
     HttpServer();
-    void begin();
+void begin();
     void stop();
 private:
     static esp_err_t hello_get_handler(httpd_req_t *req);
     static esp_err_t button_post_handler(httpd_req_t *req);
     static esp_err_t submit_post_handler(httpd_req_t *req);
+    void register_uri_handler();
     httpd_handle_t  server;
     
 };

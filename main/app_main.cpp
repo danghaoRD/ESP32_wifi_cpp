@@ -187,7 +187,7 @@ extern "C" void app_main(void)
     rd_http_server.begin();
     vTaskDelay(15000 / portTICK_PERIOD_MS);
 
-        ESP_LOGI(TAG, "mqtt conect ") ;
+    ESP_LOGI(TAG, "mqtt conect ") ;
     const char* broker_uri = "mqtt://demo.thingsboard.io:1883";
     const char* token = "Kj9nO6xI3Stzdn27st8L";
     MqttClient mqttClient(broker_uri, token);
